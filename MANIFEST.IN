@@ -1,0 +1,2 @@
+include LICENSE
+include isc_dhcp_netbox/*.ini
