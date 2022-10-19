@@ -6,7 +6,12 @@ import configparser
 import re
 
 def load_config():
-    ''' Load the dhcp_netbox.conf file '''
+    ''' 
+    Searches and loads the dhcp_netbox.conf file.
+
+    :return: A config dictionary as returned by configparser.
+    :rtype: dict
+    '''
     cfg = configparser.ConfigParser()
     cfg_file = 'dhcp_netbox.conf'
     cfg_paths = [
@@ -15,14 +20,25 @@ def load_config():
         '/etc/isc_dhcp_netbox/{}'.format(cfg_file), 
         '{}/{}'.format(os.environ.get('ISC_DHCP_NETBOX_CONF'),cfg_file)
         ]
-    #cfg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dhcp_netbox.conf')
     if cfg.read(cfg_paths) == []:
         raise Exception('Could not read dhcp_netbox.conf configuration file.')
     assert validate_config(cfg) is True        
     return cfg
 
 def validate_config(cfg):
-    ''' Validate our configuration settings '''
+    ''' 
+    Basic validation of the configuration file settings.
+           
+    :param cfg: A config dictionary as returned by configparser.
+    :type cfg: dict
+    :raises Exception: Missing <x> section in configuration.
+    :raises Exception: Missing <x> directive in configuration file.
+    :raises Exception: Parameter <x> cannot be empty.
+    :raises Exception: Invalid <protocol> value. Use: http or https.
+    :raises Exception: Invalid <loglevel> value: <x>. Choose from: ...
+    :return: True on success
+    :rtype: bool
+    '''
     if 'DHCP' not in cfg: raise Exception('Missing <DHCP> section in configuration.')
     if 'NetBox' not in cfg: raise Exception('Missing <NetBox> section in configuration.')
     if 'Logger' not in cfg: raise Exception('Missing <Logger> section in configuration.')
@@ -51,7 +67,14 @@ def validate_config(cfg):
     return True
 
 def get_log_level(cfg):
-    ''' Get the correct log level '''
+    ''' 
+    Get the correct log level 
+    
+    :param cfg: A config dictionary as returned by configparser.
+    :type cfg: dict
+    :return: The numeric log level based on the setting in the configuration file.
+    :rtype: int
+    '''
     cfg_lvl = cfg['Logger']['loglevel'].upper()
     lvl = logging.NOTSET
     if cfg_lvl == 'DEBUG': lvl = logging.DEBUG
@@ -62,10 +85,23 @@ def get_log_level(cfg):
     return lvl
 
 def get_leases_file_path():
+    '''
+    Reads the path to the DHCP leases file from the configuration.
+
+    :return: A string holding the path to the DHCP leases file.
+    :rtype: str
+    '''
     cfg = load_config()
     return cfg['DHCP']['leases_file']
 
 def valid_ip(ip):
-    ''' Simple IPv4 IP syntax validation '''
+    ''' 
+    Simple IPv4 IP syntax validation.
+
+    :param ip: An IP address in format: xxx.xxx.xxx.xxx
+    :type ip: string
+    :return: True or False depending if IP is valid or not
+    :rtype: bool
+    '''
     if bool(re.match(r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", ip)): return True
     return False

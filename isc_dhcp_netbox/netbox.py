@@ -31,7 +31,7 @@ def get_ip_prefix(nb, ip):
     Searches NetBox for the parent prefix of a given IP and returns the CIDR netmask.
     
     :param nb: A handle to the :class:`pynetbox.core.api.Api` object
-    :type nb: object
+    :type nb: pynetbox.core.api.Api
     :param ip: The IP for which we retrieve the parent network and prefix
     :type ip: str
     :raises Warning: Could not derive prefix of <IP>
@@ -49,7 +49,7 @@ def get_ip_by_address(nb, ip):
     Searches for a given IP in NetBox.
     
     :param nb: A handle to the :class:`pynetbox.core.api.Api` object
-    :type nb: object
+    :type nb: pynetbox.core.api.Api
     :param ip: The IP we want to retrieve from NetBox
     :type ip: str
     :return: A NetBox :class:`pynetbox.models.ipam.IpAddresses` object.
@@ -117,7 +117,7 @@ def assign_interface_ip(ip_obj, interface_id):
     This assigns an IP to a given interface ID.
 
     :param ip_obj: A handle to the :class:`pynetbox.models.ipam.IpAddresses` object
-    :type ip_obj: object
+    :type ip_obj: pynetbox.models.ipam.IpAddresses
     :param interface_id: The ID of the interface the IP should get assigned to.
     :type interface_id: int
     :return: Changed NetBox interface object
@@ -136,7 +136,7 @@ def unassign_interface_ip(nb, ip_obj):
     :type nb: pynetbox.core.api.Api
     :param ip_obj: A handle to the :class:`pynetbox.models.ipam.IpAddresses` object
     :type ip_obj: object
-    :return: Changed NetBox interface object
+    :return: Changed NetBox IP address object
     :rtype: :class:`pynetbox.models.ipam.IpAddresses` object
     '''
     unset_device_primary_ip(nb, ip_obj)
@@ -146,17 +146,47 @@ def unassign_interface_ip(nb, ip_obj):
     return ip_obj
 
 def get_device_by_id(nb, device_id):
+    '''
+    Retrieves a device object by device ID from NetBox.
+
+    :param nb: A handle to the :class:`pynetbox.core.api.Api` object.
+    :type nb: pynetbox.core.api.Api
+    :param device_id: An integer representing the device ID in NetBox
+    :type device_id: int
+    :return: The retrieved Device object
+    :rtype: :class:`pynetbox.models.dcim.Devices` object
+    '''
     device_results = nb.dcim.devices.filter(id=device_id, exclude="config_context")
     if len(device_results) == 1:
         for d in device_results:
             return d
 
 def set_device_primary_ip(nb, device_id, ip_id):
+    '''
+    Set the primary IPv4 address for the given device in NetBox.
+
+    :param nb: A handle to the :class:`pynetbox.core.api.Api` object.
+    :type nb: pynetbox.core.api.Api
+    :param device_id: An integer representing the device ID in NetBox
+    :type device_id: int
+    :param ip_id: The ID of the IP address to be assigned to the device.
+    :type ip_id: int
+    TODO: add checks and return value...
+    '''
     d = get_device_by_id(nb, device_id)
     d.primary_ip4 = ip_id
     d.save()
     
 def unset_device_primary_ip(nb, ip_obj):
+    '''
+    An alias for the set_device_primary_ip function that allows you to un-assign a given IP address from the device primary IP field.
+
+    :param nb: A handle to the :class:`pynetbox.core.api.Api` object.
+    :type nb: pynetbox.core.api.Api
+    :param ip_obj: A :class:`pynetbox.models.ipam.IpAddresses` object
+    :type ip_obj: pynetbox.models.ipam.IpAddresses
+    TODO: add checks and return value...
+    '''
     if ip_obj.assigned_object_type == 'dcim.interface':
         iface = get_interface_by_id(nb, ip_obj.assigned_object_id)
         set_device_primary_ip(nb, iface.device.id, None)
