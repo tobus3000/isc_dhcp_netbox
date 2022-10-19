@@ -2,6 +2,26 @@
 
 Updates NetBox with ISC DHCP lease information.
 
+## Overview
+
+This program lets you synchronize NetBox with your ISC DHCP server.
+
+### Active Leases
+
+Activities on active leases.
+
+* Create new IP address if not already existing.
+* Assign IP address to interface if lease MAC matches the interface MAC.
+* Assign IP as primary IPv4 address on the device the interface belongs to.
+* Re-assign IP from interface 1 to interface 2 should the DHCP lease be handed out to another device.
+
+### Inactive/Expired Leases
+
+Activities on inactive and/or expired leases.
+
+* The device primary IP will be set to None.
+* The interface assignments will be removed from the IP.
+
 ## Installation
 
 TODO: Complete install instructions.
