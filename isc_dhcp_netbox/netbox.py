@@ -5,47 +5,6 @@ import pynetbox
 from isc_dhcp_leases import Lease
 from isc_dhcp_netbox import utils
 
-# class NetBoxLease(Lease):
-#     @classmethod
-#     def cast(cls, nb_lease: Lease):
-#         assert isinstance(nb_lease, Lease)
-#         nb_lease.__class__ = cls
-#         assert isinstance(nb_lease, NetBoxLease)
-#         nb_lease.__init__()
-#         return nb_lease
-    
-#     def __init__(self):
-#         self._mask = 0
-
-#     @property
-#     def mask(self):
-#         return self._mask
-
-#     @mask.setter
-#     def mask(self, mask):
-#         self._mask = mask
-    
-#     @property
-#     def pynb(self):
-#         return self._pynb
-
-#     @pynb.setter
-#     def pynb(self, nb):
-#         assert isinstance(nb, pynetbox.core.api.Api)
-#         self._pynb = nb
-
-
-#     def resolve_netmask(self, ip):
-#         """ Retrieves the parent prefix of a given IP and returns the netmask """
-#         if utils.valid_ip(ip) is False: raise Exception('Invalid IPv4 address: {}'.format(str(ip)))
-        
-        
-        
-#         r = nb_get('ipam/prefixes/?contains={}'.format(ip))
-#         return r
-    
-
-
 def netbox_session(cfg):
     '''
     Creates the pynetbox session object.
@@ -86,6 +45,16 @@ def get_ip_prefix(nb, ip):
     return int(out[1])
 
 def get_ip_by_address(nb, ip):
+    ''' 
+    Searches for a given IP in NetBox.
+    
+    :param nb: A handle to the :class:`pynetbox.core.api.Api` object
+    :type nb: object
+    :param ip: The IP we want to retrieve from NetBox
+    :type ip: str
+    :return: A NetBox :class:`pynetbox.models.ipam.IpAddresses` object.
+    :rtype: pynetbox.models.ipam.IpAddresses    
+    '''
     return nb.ipam.ip_addresses.get(address=ip)
 
 def get_interface_by_mac(nb, mac):
