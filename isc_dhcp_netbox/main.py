@@ -74,8 +74,7 @@ def main():
     logging.info("DHCP Lease sync has completed.")
 
 if __name__ == "__main__":
-    main()
-    # try:
-    #     main()
-    # except Exception as e:
-    #     exit(e)
+    try:
+        main()
+    except Exception as e:
+        exit(e)

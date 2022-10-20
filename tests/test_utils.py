@@ -16,19 +16,18 @@ def test_invalid_ip(ip: str) -> None:
     assert res == False
 
 log_level_params = [
-    {'Logger': {'loglevel': 'info'}},
-    {'Logger': {'loglevel': 'debug'}},
-    {'Logger': {'loglevel': 'warning'}},
-    {'Logger': {'loglevel': 'error'}},
-    {'Logger': {'loglevel': 'critical'}}
+    ({'Logger': {'loglevel': 'debug'}},10),
+    ({'Logger': {'loglevel': 'info'}},20),
+    ({'Logger': {'loglevel': 'warning'}},30),
+    ({'Logger': {'loglevel': 'error'}},40),
+    ({'Logger': {'loglevel': 'critical'}},50)
     ]
-@pytest.mark.parametrize("cfg", log_level_params)
-def test_get_log_level(cfg: dict) -> None:
+@pytest.mark.parametrize("cfg,expected", log_level_params)
+def test_get_log_level(cfg: dict, expected: int) -> None:
     res = utils.get_log_level(cfg)
     assert isinstance(res, int)
     assert res != 0
-    assert res >= 10 and res <= 50
-
+    assert res == expected
 
 def test_load_config() -> None:
     os.environ['ISC_DHCP_NETBOX_CONF'] = 'tests/etc'
@@ -42,13 +41,16 @@ def test_load_non_existing_config_file() -> None:
     assert str(e.value) == 'Could not read dhcp_netbox-non-existing.conf configuration file.'
     
 
-# cfg_path_params = [
-#     {'DHCP': {'leases_file': '/tmp'}}
-# ]
-# @pytest.mark.parametrize("cfg", cfg_path_params)
-# def test_get_leases_file_path(cfg: dict) -> None:
-#     res = utils.get_leases_file_path(cfg)
-#     assert isinstance(res, str)
-#     assert res != ''
+cfg_validation_section_params = [
+    ({'NetBox': {}, 'Logger': {}},'DHCP'),
+    ({'DHCP': {}, 'Logger': {}},'NetBox'),
+    ({'DHCP': {}, 'NetBox': {}},'Logger')
+]
+@pytest.mark.parametrize("cfg,expected", cfg_validation_section_params)
+def test_validate_config_missing_section(cfg: dict, expected: str) -> None:
+    with pytest.raises(Exception) as e:
+        utils.validate_config(cfg)
+    assert str(e.value) == 'Missing <{}> section in configuration.'.format(expected)
+    
 
 
