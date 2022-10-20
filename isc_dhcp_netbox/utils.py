@@ -103,5 +103,8 @@ def valid_ip(ip):
     :return: True or False depending if IP is valid or not
     :rtype: bool
     '''
-    if bool(re.match(r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", ip)): return True
+    if bool(re.match(r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", ip)): 
+        for p in ip.split('.'):
+            if int(p) < 0 or int(p) > 255: return False
+        return True
     return False
