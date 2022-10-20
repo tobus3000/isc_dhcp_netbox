@@ -5,15 +5,15 @@ import os
 import configparser
 import re
 
-def load_config():
+def load_config(cfg_file='dhcp_netbox.conf'):
     ''' 
     Searches and loads the dhcp_netbox.conf file.
 
     :return: A config dictionary as returned by configparser.
     :rtype: dict
     '''
+    print(os.environ.get('ISC_DHCP_NETBOX_CONF'))
     cfg = configparser.ConfigParser()
-    cfg_file = 'dhcp_netbox.conf'
     cfg_paths = [
         '{}/{}'.format(os.curdir, cfg_file), 
         '{}/{}'.format(os.path.expanduser("~"), cfg_file), 
@@ -21,7 +21,7 @@ def load_config():
         '{}/{}'.format(os.environ.get('ISC_DHCP_NETBOX_CONF'),cfg_file)
         ]
     if cfg.read(cfg_paths) == []:
-        raise Exception('Could not read dhcp_netbox.conf configuration file.')
+        raise Exception('Could not read {} configuration file.'.format(cfg_file))
     assert validate_config(cfg) is True        
     return cfg
 
@@ -82,17 +82,21 @@ def get_log_level(cfg):
     elif cfg_lvl == 'WARNING': lvl = logging.WARNING
     elif cfg_lvl == 'ERROR': lvl = logging.ERROR
     elif cfg_lvl == 'CRITICAL': lvl = logging.CRITICAL
-    return lvl
+    return int(lvl)
 
 def get_leases_file_path():
     '''
     Reads the path to the DHCP leases file from the configuration.
 
+    :raises Exception: Path to DHCP lease file does not exist.
     :return: A string holding the path to the DHCP leases file.
     :rtype: str
     '''
     cfg = load_config()
-    return cfg['DHCP']['leases_file']
+    path = cfg['DHCP']['leases_file']
+    if os.path.exists(path):
+        return path
+    raise Exception('Path to DHCP lease file does not exist.')
 
 def valid_ip(ip):
     ''' 
