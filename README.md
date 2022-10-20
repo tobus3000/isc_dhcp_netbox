@@ -22,6 +22,25 @@ Activities on inactive and/or expired leases.
 * The device primary IP will be set to None.
 * The interface assignments will be removed from the IP.
 
+## Pre-requisites
+
+### ipam / ip-addresses
+
+The program will automatically create IP address objects for the DHCP managed IP range.
+
+Make sure to set the status to **DHCP** on all DHCP controlled IP addresses (should they already be existing).
+
+### other / tags
+
+The IP addresses under control of this program are being tagged.
+
+Create the **live-data** tag in NetBox prior to running this program.
+
+| Key  | Value     |
+| ---  | ---       |
+| Name | Live Data |
+| Slug | live-data |
+
 ## Installation
 
 ### Git
@@ -45,25 +64,6 @@ pip3 install isc_dhcp_netbox-0.0.1-py3-none-any.whl
 pip3 uninstall isc-dhcp-netbox
 ```
 
-## Pre-requisites
-
-### ipam / ip-addresses
-
-The program will automatically create IP address objects for the DHCP managed IP range.
-
-Make sure to set the status to **DHCP** on all DHCP controlled IP addresses (should they already be existing).
-
-### other / tags
-
-The IP addresses under control of this program are being tagged.
-
-Create the **live-data** tag in NetBox prior to running this program.
-
-| Key  | Value     |
-| ---  | ---       |
-| Name | Live Data |
-| Slug | live-data |
-
 ## Configuration
 
 ### dhcp_netbox.conf
@@ -76,3 +76,21 @@ The configuration file can be stored in any of the below locations.
 * Path specified in environment variable: **ISC_DHCP_NETBOX_CONF**
 
 > Make sure to always name the configuration file: **dhcp_netbox.conf**
+
+## Usage
+
+### Manual run
+
+The package installation has setup a CLI handler for calling the script.
+
+```bash
+/usr/local/bin/isc_dhcp_netbox
+```
+
+### Crontab
+
+Run the script through crontab (every 15 minutes).
+
+```bash
+*/15 * * * * /usr/local/bin/isc_dhcp_netbox
+```
