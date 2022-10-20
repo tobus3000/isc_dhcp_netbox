@@ -24,7 +24,26 @@ Activities on inactive and/or expired leases.
 
 ## Installation
 
-TODO: Complete install instructions.
+### Git
+
+```bash
+git clone git@github.com:tobus3000/isc_dhcp_netbox.git
+cd isc_dhcp_netbox
+python setup.py build
+sudo python setup.py install
+```
+
+### Python Wheel
+
+```bash
+pip3 install isc_dhcp_netbox-0.0.1-py3-none-any.whl
+```
+
+## Remove package
+
+```bash
+pip3 uninstall isc-dhcp-netbox
+```
 
 ## Pre-requisites
 
