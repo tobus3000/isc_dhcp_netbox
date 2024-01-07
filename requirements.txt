@@ -1,4 +1,4 @@
 urllib3==1.26.18
 requests==2.31.0
-isc-dhcp-leases==0.9.1
+isc-dhcp-leases>=0.10.0
 pynetbox==6.6.2

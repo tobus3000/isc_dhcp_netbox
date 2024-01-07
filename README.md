@@ -55,7 +55,7 @@ sudo python setup.py install
 ### Python Wheel
 
 ```bash
-pip3 install isc_dhcp_netbox-0.0.1-py3-none-any.whl
+pip3 install isc_dhcp_netbox-0.0.2-py3-none-any.whl
 ```
 
 ## Remove package

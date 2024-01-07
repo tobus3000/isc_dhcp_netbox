@@ -18,7 +18,7 @@ def netbox_session(cfg):
     host = cfg['NetBox']['host']
     pk = cfg['NetBox']['private_key_file']
     token = cfg['NetBox']['api_token']
-    url = '{}://{}'.format(proto.lower(), host)
+    url = f"{proto.lower()}://{host}"
     if pk == '':
         nb = pynetbox.api(url, token=token)
     else:
@@ -34,14 +34,16 @@ def get_ip_prefix(nb, ip):
     :type nb: pynetbox.core.api.Api
     :param ip: The IP for which we retrieve the parent network and prefix
     :type ip: str
-    :raises Warning: Could not derive prefix of <IP>
+    :raises ValueError: Could not derive prefix of <IP>
     :return: an integer representing the CIDR netmask (0-32)
     :rtype: int
     '''
     assert utils.valid_ip(ip)
     nb_ip_prefix = nb.ipam.prefixes.filter(contains=ip)
-    if len(nb_ip_prefix) != 1: raise Warning('Could not derive prefix of {}'.format(ip))
-    for pfx in nb_ip_prefix: out = str(pfx).split('/',1)
+    if len(nb_ip_prefix) != 1:
+        raise ValueError(f"Could not derive prefix of {ip}")
+    for pfx in nb_ip_prefix: 
+        out = str(pfx).split('/',1)
     return int(out[1])
 
 def get_ip_by_address(nb, ip):
@@ -71,7 +73,8 @@ def get_interface_by_mac(nb, mac):
     out = None
     nb_interface = nb.dcim.interfaces.filter(mac_address=mac)
     if len(nb_interface) == 1:
-        for ifc in nb_interface: out = ifc
+        for ifc in nb_interface:
+            out = ifc
     return out
 
 def get_interface_by_id(nb, interface_id):
@@ -88,7 +91,8 @@ def get_interface_by_id(nb, interface_id):
     out = None
     nb_interface = nb.dcim.interfaces.filter(id=interface_id)
     if len(nb_interface) == 1:
-        for ifc in nb_interface: out = ifc
+        for ifc in nb_interface:
+            out = ifc
     return out
 
 def create_ip(nb, ip):
