@@ -20,7 +20,8 @@
 
 ### v0.0.2 - Bugfix Release
 
-TODO: [Issue #4](https://github.com/tobus3000/isc_dhcp_netbox/issues/4)
+* *TH*: Fixed 'Could not derive prefix' bug. [Issue #4](https://github.com/tobus3000/isc_dhcp_netbox/issues/4)
+* *TH*: *Changed* Bumped versions of dependencies in requirements file.
 
 ### v0.0.1 - Initial Release
 

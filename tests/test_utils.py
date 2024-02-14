@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-
-import pytest
+"""Tests for the utils module."""
 import os
 import configparser
+import pytest
 from isc_dhcp_netbox import utils
 
 @pytest.mark.parametrize("ip", ['192.168.200.1', '10.10.5.1', '255.255.255.255', '1.1.1.1', '10.255.128.0'])
@@ -39,7 +38,6 @@ def test_load_non_existing_config_file() -> None:
     with pytest.raises(Exception) as e:
         utils.load_config('dhcp_netbox-non-existing.conf')
     assert str(e.value) == 'Could not read dhcp_netbox-non-existing.conf configuration file.'
-    
 
 cfg_validation_section_params = [
     ({'NetBox': {}, 'Logger': {}},'DHCP'),
