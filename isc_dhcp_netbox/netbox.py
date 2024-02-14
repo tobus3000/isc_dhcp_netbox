@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
-
+""" Netbox module of package isc_dhcp_netbox """
 import logging
 import pynetbox
-from isc_dhcp_leases import Lease
 from isc_dhcp_netbox import utils
 
-def netbox_session(cfg):
+def netbox_session(cfg: dict):
     '''
     Creates the pynetbox session object.
 
@@ -16,17 +14,13 @@ def netbox_session(cfg):
     '''
     proto = cfg['NetBox']['protocol']
     host = cfg['NetBox']['host']
-    pk = cfg['NetBox']['private_key_file']
     token = cfg['NetBox']['api_token']
-    url = '{}://{}'.format(proto.lower(), host)
-    if pk == '':
-        nb = pynetbox.api(url, token=token)
-    else:
-        nb = pynetbox.api(url, private_key_file=pk, token=token)
+    url = f"{proto.lower()}://{host}"
+    nb = pynetbox.api(url, token=token)
     logging.debug('Started NetBox session.')
     return nb
 
-def get_ip_prefix(nb, ip):
+def get_ip_prefix(nb, ip: str) -> int:
     ''' 
     Searches NetBox for the parent prefix of a given IP and returns the CIDR netmask.
     
@@ -34,17 +28,19 @@ def get_ip_prefix(nb, ip):
     :type nb: pynetbox.core.api.Api
     :param ip: The IP for which we retrieve the parent network and prefix
     :type ip: str
-    :raises Warning: Could not derive prefix of <IP>
+    :raises ValueError: Could not derive prefix of <IP>
     :return: an integer representing the CIDR netmask (0-32)
     :rtype: int
     '''
     assert utils.valid_ip(ip)
-    nb_ip_prefix = nb.ipam.prefixes.filter(contains=ip)
-    if len(nb_ip_prefix) != 1: raise Warning('Could not derive prefix of {}'.format(ip))
-    for pfx in nb_ip_prefix: out = str(pfx).split('/',1)
+    nb_ip_prefix = nb.ipam.prefixes.filter(contains=ip, children=0)
+    if len(nb_ip_prefix) != 1:
+        raise ValueError(f"Could not derive prefix of {ip}")
+    for pfx in nb_ip_prefix:
+        out = str(pfx).split('/',1)
     return int(out[1])
 
-def get_ip_by_address(nb, ip):
+def get_ip_by_address(nb, ip: str):
     ''' 
     Searches for a given IP in NetBox.
     
@@ -57,7 +53,7 @@ def get_ip_by_address(nb, ip):
     '''
     return nb.ipam.ip_addresses.get(address=ip)
 
-def get_interface_by_mac(nb, mac):
+def get_interface_by_mac(nb, mac: str):
     '''
     Search for a device interface that uses the given MAC.
 
@@ -71,10 +67,11 @@ def get_interface_by_mac(nb, mac):
     out = None
     nb_interface = nb.dcim.interfaces.filter(mac_address=mac)
     if len(nb_interface) == 1:
-        for ifc in nb_interface: out = ifc
+        for ifc in nb_interface:
+            out = ifc
     return out
 
-def get_interface_by_id(nb, interface_id):
+def get_interface_by_id(nb, interface_id: int):
     '''
     Search for a device interface that uses the given ID.
 
@@ -88,10 +85,11 @@ def get_interface_by_id(nb, interface_id):
     out = None
     nb_interface = nb.dcim.interfaces.filter(id=interface_id)
     if len(nb_interface) == 1:
-        for ifc in nb_interface: out = ifc
+        for ifc in nb_interface:
+            out = ifc
     return out
 
-def create_ip(nb, ip):
+def create_ip(nb, ip: str):
     '''
     This creates a new IP object in NetBox.
     
@@ -112,7 +110,7 @@ def create_ip(nb, ip):
                 })
     return nb_ip
 
-def assign_interface_ip(ip_obj, interface_id):
+def assign_interface_ip(ip_obj, interface_id: int):
     '''
     This assigns an IP to a given interface ID.
 
@@ -145,7 +143,7 @@ def unassign_interface_ip(nb, ip_obj):
     ip_obj.save()
     return ip_obj
 
-def get_device_by_id(nb, device_id):
+def get_device_by_id(nb, device_id: int):
     '''
     Retrieves a device object by device ID from NetBox.
 
@@ -161,7 +159,7 @@ def get_device_by_id(nb, device_id):
         for d in device_results:
             return d
 
-def set_device_primary_ip(nb, device_id, ip_id):
+def set_device_primary_ip(nb, device_id, ip_id: int):
     '''
     Set the primary IPv4 address for the given device in NetBox.
 
@@ -176,10 +174,11 @@ def set_device_primary_ip(nb, device_id, ip_id):
     d = get_device_by_id(nb, device_id)
     d.primary_ip4 = ip_id
     d.save()
-    
+
 def unset_device_primary_ip(nb, ip_obj):
     '''
-    An alias for the set_device_primary_ip function that allows you to un-assign a given IP address from the device primary IP field.
+    An alias for the set_device_primary_ip function that allows you to un-assign
+    a given IP address from the device primary IP field.
 
     :param nb: A handle to the :class:`pynetbox.core.api.Api` object.
     :type nb: pynetbox.core.api.Api

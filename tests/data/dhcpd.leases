@@ -1,0 +1,53 @@
+# The format of this file is documented in the dhcpd.leases(5) manual page.
+# This lease file was written by isc-dhcp-4.4.1
+
+# authoring-byte-order entry is generated, DO NOT DELETE
+authoring-byte-order little-endian;
+
+
+failover peer "tobolan-failover" state {
+  my state communications-interrupted at 4 2022/11/10 12:07:26;
+  partner state normal at 3 2022/10/12 06:03:00;
+}
+lease 192.168.222.6 {
+  starts 5 2021/07/23 04:25:32;
+  tstp 4 2021/07/01 10:45:02;
+  tsfp 5 2021/07/23 04:25:32;
+  atsfp 5 2021/07/23 04:25:32;
+  binding state free;
+}
+lease 192.168.222.130 {
+  starts 3 2021/07/14 01:32:56;
+  ends 3 2021/07/14 08:28:54;
+  tstp 3 2021/07/14 08:28:54;
+  tsfp 3 2021/07/14 08:28:54;
+  atsfp 3 2021/07/14 08:28:54;
+  cltt 3 2021/07/14 01:32:56;
+  binding state free;
+  hardware ethernet d4:de:ad:be:ef:3e;
+  uid "\001\324\241H\376e>";
+}
+lease 192.168.222.7 {
+  starts 5 2021/12/10 18:07:24;
+  ends 5 2021/12/10 18:09:24;
+  tstp 3 2021/12/08 07:14:33;
+  tsfp 3 2021/12/08 13:14:33;
+  atsfp 3 2021/12/08 13:14:33;
+  cltt 5 2021/12/10 18:07:24;
+  binding state free;
+  hardware ethernet 70:de:ad:be:ef:01;
+}
+lease 192.168.117.135 {
+  starts 6 2024/01/13 10:30:04;
+  ends 6 2024/01/13 11:30:04;
+  tstp 6 2024/01/13 23:00:04;
+  tsfp 5 2022/11/11 00:24:31;
+  cltt 6 2024/01/13 10:30:04;
+  binding state active;
+  next binding state expired;
+  hardware ethernet 40:de:ad:be:ef:54;
+  set ddns-dhcid = "\000\000\001\364M}\235\216t\345\210\024\177\2438\010r\267\245\263\032\342\325\203\002\203\276\032!\341\275\3149\227\211";
+  set ddns-rev-name = "135.117.168.192.in-addr.arpa.";
+  set ddns-fwd-name = "storm3000.iot.tobo.lan";
+  client-hostname "storm3000";
+}
